@@ -82,14 +82,15 @@ const HomeSearch = () => {
       <form onSubmit={handleTextSubmit}>
         <div className="relative flex items-center">
           <Input
-            type={"text"}
-            placeholder={"Enter make, model, or use our AI Image search"}
+            type="text"
+            placeholder="Enter make, model, or use our AI Image search"
             onChange={(e) => setSearhTerm(e.target.value)}
             value={searhTerm}
-            className="pl-10 pr-12 py-6 w-full rounded-full border-gray-300 bg-white/95 backdrop-blur-sm"
+            className="pl-10 pr-30 py-6 w-full rounded-full border-gray-300 bg-white/95 backdrop-blur-sm"
           />
 
-          <div className="absolute right-[100px]">
+          {/* Right section container */}
+          <div className="absolute right-2 flex gap-2 items-center">
             <Camera
               size={35}
               onClick={() => setIsImageSearchActive(!isImageSearchActive)}
@@ -99,11 +100,11 @@ const HomeSearch = () => {
                 color: isImageSearchActive ? "white" : "",
               }}
             />
-          </div>
 
-          <Button type="submit" className="absolute right-2 rounded-full">
-            Search
-          </Button>
+            <Button type="submit" className="rounded-full px-4 py-2 text-sm">
+              Search
+            </Button>
+          </div>
         </div>
       </form>
       {isImageSearchActive && (
