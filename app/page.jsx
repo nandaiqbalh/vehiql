@@ -24,10 +24,9 @@ export default function Home() {
                 Advanced AI Car Search and test drive booking platform.
               </p>
             </div>
+            {/* Search */}
+            <HomeSearch />
           </div>
-
-          {/* Search */}
-          <HomeSearch />
         </section>
 
         <section className="py-12">
@@ -172,12 +171,14 @@ export default function Home() {
 
         <section className="py-12 bg-gray-50">
           <div className="container mx-auto px-4">
-            <h2 className="text-2xl font-bold mb-4 text-center">Frequently Asked Question</h2>
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              Frequently Asked Question
+            </h2>
             <Accordion type="single" collapsible className="w-full">
               {faqItems.map((item, index) => (
-                <AccordionItem  key={index} value={`item-${index}`}>
+                <AccordionItem key={index} value={`item-${index}`}>
                   <AccordionTrigger className="flex justify-between items-center p-4 cursor-pointer">
-                    <span className="text-lg font-medium">{item.question}</span>
+                    <span className="font-semibold">{item.question}</span>
                   </AccordionTrigger>
                   <AccordionContent className="px-4 bg-gray-50 rounded-lg">
                     {item.answer}
@@ -190,8 +191,13 @@ export default function Home() {
 
         <section className="py-16 dotted-background text-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl font-bold mb-4">Ready to Find Your Dream Car?</h2>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">Join thousands of satisfied customers found their perfect vehicle through our platform.</p>
+            <h2 className="text-3xl font-bold mb-4">
+              Ready to Find Your Dream Car?
+            </h2>
+            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
+              Join thousands of satisfied customers found their perfect vehicle
+              through our platform.
+            </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4 mt">
               <Button size={"lg"} variant={"secondary"} asChild>
                 <Link href={"/cars"}>View All Cars</Link>
@@ -203,7 +209,6 @@ export default function Home() {
               </SignedOut>
             </div>
           </div>
-
         </section>
       </div>
     </>
