@@ -2118,12 +2118,12 @@ declare type Mappings = ReadonlyDeep_2<{
 
 /**
  * Class that holds the list of all extensions, applied to particular instance,
- * as well as resolved versions of the components that need to apply on
+ * as well as resolved versions of the _components that need to apply on
  * different levels. Main idea of this class: avoid re-resolving as much of the
  * stuff as possible when new extensions are added while also delaying the
  * resolve until the point it is actually needed. For example, computed fields
  * of the model won't be resolved unless the model is actually queried. Neither
- * adding extensions with `client` component only cause other components to
+ * adding extensions with `client` component only cause other _components to
  * recompute.
  */
 declare class MergedExtensionsList {
@@ -3056,7 +3056,7 @@ declare type SortOrder = 'asc' | 'desc';
 /**
  * An interface that represents a span. A span represents a single operation
  * within a trace. Examples of span might include remote procedure calls or a
- * in-process function calls to sub-components. A Trace has a single, top-level
+ * in-process function calls to sub-_components. A Trace has a single, top-level
  * "root" Span that in turn may have zero or more child Spans, which in turn
  * may have children.
  *
