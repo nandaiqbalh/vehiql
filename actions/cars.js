@@ -151,7 +151,6 @@ export async function addCar({ carData, images }) {
 
             // Skip if image data is not valid
             if (!base64Data || !base64Data.startsWith("data:image/")) {
-                console.warn("Skipping invalid image data");
                 continue;
             }
 
@@ -175,7 +174,6 @@ export async function addCar({ carData, images }) {
                 });
 
             if (error) {
-                console.error("Error uploading image:", error);
                 throw new Error(`Failed to upload image: ${error.message}`);
             }
 
@@ -249,7 +247,6 @@ export async function getCars(search = "") {
             data: serializedCars,
         };
     } catch (error) {
-        console.error("Error fetching cars:", error);
         return {
             success: false,
             error: error.message,
@@ -302,12 +299,10 @@ export async function deleteCar(id) {
                     .remove(filePaths);
 
                 if (error) {
-                    console.error("Error deleting images:", error);
                     // We continue even if image deletion fails
                 }
             }
         } catch (storageError) {
-            console.error("Error with storage operations:", storageError);
             // Continue with the function even if storage operations fail
         }
 
@@ -318,7 +313,6 @@ export async function deleteCar(id) {
             success: true,
         };
     } catch (error) {
-        console.error("Error deleting car:", error);
         return {
             success: false,
             error: error.message,
@@ -355,7 +349,6 @@ export async function updateCarStatus(id, { status, featured }) {
             success: true,
         };
     } catch (error) {
-        console.error("Error updating car status:", error);
         return {
             success: false,
             error: error.message,
