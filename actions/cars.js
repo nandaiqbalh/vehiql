@@ -113,15 +113,12 @@ export async function processCarImageWithAI(file) {
                 data: carDetails,
             };
         } catch (parseError) {
-            console.error("Failed to parse AI response:", parseError);
-            console.log("Raw response:", text);
             return {
                 success: false,
                 error: "Failed to parse AI response",
             };
         }
     } catch (error) {
-        console.error();
         throw new Error("Gemini API error:" + error.message);
     }
 }
