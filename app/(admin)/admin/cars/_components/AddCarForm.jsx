@@ -126,6 +126,7 @@ export const AddCarForm = () => {
         }
     }, [addCarResult, router]);
 
+    // handle process image error condition
     useEffect(() => {
         if (processImageError) {
             toast.error(processImageError.message || "Failed to upload car");
@@ -140,7 +141,7 @@ export const AddCarForm = () => {
             // Update form with AI results
             setValue("make", carDetails.make);
             setValue("model", carDetails.model);
-            setValue("year", carDetails.year.toString());
+            setValue("year", carDetails.year?.toString());
             setValue("color", carDetails.color);
             setValue("bodyType", carDetails.bodyType);
             setValue("fuelType", carDetails.fuelType);
@@ -154,7 +155,10 @@ export const AddCarForm = () => {
             reader.onload = (e) => {
                 setUploadedImages((prev) => [...prev, e.target.result]);
             };
-            reader.readAsDataURL(uploadedAiImage);
+
+            if (uploadedAiImage){
+                reader.readAsDataURL(uploadedAiImage);
+            }
 
             toast.success("Successfully extracted car details", {
                 description: `Detected ${carDetails.year} ${carDetails.make} ${

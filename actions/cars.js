@@ -46,12 +46,12 @@ export async function processCarImageWithAI(file) {
       2. Model
       3. Year (approximately)
       4. Color
-      5. Body type (SUV, Sedan, Hatchback, etc.)
-      6. Mileage
-      7. Fuel type (your best guess)
-      8. Transmission type (your best guess)
-      9. Price (your best guess)
-      9. Short Description as to be added to a car listing
+      5. Body type – Must be one of the following: "SUV", "Sedan", "Hatchback", "Convertible", "Coupe", "Wagon", "Pickup"
+      6. Mileage (in miles) and fill it your best guess
+      7. Fuel type – Must be one of the following: "Petrol", "Diesel", "Electric", "Hybrid", "Plug-in Hybrid"
+      8. Transmission type – Must be one of the following: "Automatic", "Manual", "Semi-Automatic"
+      9. Price – Return a best-guess price in US dollars as digits only, no symbols or commas, and formatted as a string (e.g., "15000")
+      10. Short Description as to be added to a car listing
 
       Format your response as a clean JSON object with these fields:
       {
@@ -194,7 +194,7 @@ export async function addCar({ carData, images }) {
                 make: carData.make,
                 model: carData.model,
                 year: carData.year,
-                price: carData.price,
+                price: String(Number(carData.price)),
                 mileage: carData.mileage,
                 color: carData.color,
                 fuelType: carData.fuelType,
