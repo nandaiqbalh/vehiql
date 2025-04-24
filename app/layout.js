@@ -23,7 +23,7 @@ export default function RootLayout({ children }) {
 
           <footer className={`bg-blue-50 py-12`}>
             <div className="container mx-auto px-4 text-center">
-              <p>
+              <p className={`text-sm`}>
                 @nandaiqbalh |{" "}
                 <span className="text-sm text-muted-foreground">
                   <a href="https://www.youtube.com/watch?v=HyGi_SjQqV4">
