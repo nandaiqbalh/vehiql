@@ -1,7 +1,7 @@
 "use client"
 
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {Clock, Loader2, Save, Shield} from "lucide-react";
+import {Clock, Loader2, Save, Search, Shield, Users, UserX} from "lucide-react";
 import useFetch from "@/hooks/UseFetch";
 import {getDealershipInfo, getUsers, saveWorkingHours, updateUserRole} from "@/actions/settings";
 import {useEffect, useState} from "react";
@@ -11,6 +11,8 @@ import {Label} from "@/components/ui/label";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {toast} from "sonner";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {Badge} from "@/components/ui/badge";
 
 const DAYS = [
     {value: "MONDAY", label: "Monday"},
@@ -34,6 +36,10 @@ const SettingsForm = () => {
     );
 
     const [userSearch, setUserSearch] = useState("")
+
+    const handleSearchSubmit = async () => {
+
+    }
 
     const {
         loading: fetchingSettings,
@@ -123,6 +129,62 @@ const SettingsForm = () => {
             fetchDealershipInfo()
         }
     }, [saveResult]);
+
+    const filteredUsers = usersData?.success ? usersData.data.filter( user =>
+        user.name?.toLowerCase().includes(userSearch.toLowerCase()) ||
+        user.email.toLowerCase().includes(userSearch.toLowerCase())
+    )  : []
+
+    const handleMakeAdmin = async (user) => {
+        const isConfirmed = confirm(
+            `Are you sure you want to give admin privileges to ${user.name || user.email}? Admin users can manage all aspects of the dealership.`
+        );
+
+        if (isConfirmed) {
+            await updateRole(user.id, "ADMIN");
+        }
+    };
+
+    const handleRemoveAdmin = async (user) => {
+        const isConfirmed = confirm(
+            `Are you sure you want to remove admin privileges from ${user.name || user.email}? Admin users can manage all aspects of the dealership.`
+        );
+
+        if (isConfirmed) {
+            await updateRole(user.id, "USER"); // ganti peran jadi USER (atau role default kamu)
+        }
+    };
+
+
+    useEffect(() => {
+        if (settingsError){
+            toast.error("Failed to load dealership settings")
+        }
+
+        if (saveError){
+            toast.error(`Failed to save working hours: ${saveError.message}`)
+        }
+
+        if (usersError){
+            toast.error("Failed to load users")
+        }
+
+        if (updateRoleError){
+            toast.error("Failed to update user role")
+        }
+
+    }, [settingsError, saveError, usersError, updateRoleError]);
+
+    useEffect(() => {
+        if (saveResult?.success){
+            toast.success("Working hours saved successfully!")
+            fetchDealershipInfo()
+        }
+        if (updateRoleResult?.success){
+            toast.success("User role updated successfully!")
+            fetchUsers()
+        }
+    }, [saveResult, updateRoleResult]);
 
     return (
         <div className={`space-y-6`}>
@@ -247,7 +309,123 @@ const SettingsForm = () => {
                 </TabsContent>
 
                 <TabsContent value={`admins`} className={`space-y-6 mt-6`}>
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Admin Users</CardTitle>
+                            <CardDescription>Manage users with admin privileges</CardDescription>
+                        </CardHeader>
 
+                        <CardContent>
+                            <div className={`mb-6 relative`} >
+                                <Search className={`absolute left-2.5 top-2.5 h-4 w-4 text-gray-500`} />
+                                <Input
+                                    type={`search`}
+                                    placeholder="Search users..."
+                                    value={userSearch}
+                                    onChange={e => setUserSearch(e.target.value)}
+                                    className={`pl-9 w-full`} />
+                            </div>
+
+                            {fetchingUsers ? (
+                                <div className={`py-12 flex justify-center`}>
+                                    <Loader2 className={`mr-2 h-4 w-4 animate-spin`} />
+                                </div>
+                            ) : (
+                                usersData?.success && filteredUsers.length > 0 ? (
+
+                                    <>
+                                        <div>
+                                            <Table>
+
+                                                <TableHeader>
+                                                    <TableRow>
+                                                        <TableHead>User</TableHead>
+                                                        <TableHead>Email</TableHead>
+                                                        <TableHead>Role</TableHead>
+                                                        <TableHead className={`text-right`}>Action</TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+
+                                                <TableBody>
+
+                                                    {filteredUsers.map((user) => {
+                                                        return <>
+                                                            <TableRow>
+
+                                                                <TableCell>
+                                                                    <div className={`flex items-center gap-2`}>
+                                                                        <div className={`w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden relative`}>
+                                                                            {user.imageUrl ? (
+                                                                                <img src={user.imageUrl} alt={user.name || "User"} className={`w-full h-full object-cover`}/>
+                                                                            ) : (
+                                                                                <Users className={`h-4 w-4 text-gray-500`} />
+                                                                            )}
+                                                                        </div>
+                                                                        <span>{user.name || "Unnamed User"}</span>
+                                                                    </div>
+                                                                </TableCell>
+
+                                                                <TableCell>
+                                                                    {user.email}
+                                                                </TableCell>
+
+                                                                <TableCell>
+                                                                    <Badge className={user.role === "ADMIN" ? "bg-green-800" : "bg-gray-800"}>
+                                                                        {user.role}
+                                                                    </Badge>
+                                                                </TableCell>
+
+                                                                <TableCell className={`text-right`}>
+                                                                    {user.role === "ADMIN" ? (
+                                                                        <Button
+                                                                            size={`sm`}
+                                                                            className={`text-red-600`}
+                                                                            disabled={updatingRole}
+                                                                            onClick={() => handleRemoveAdmin(user)}
+                                                                            variant={`outline`}>
+                                                                            <UserX className={`mr-2 w-4 h-4`} />
+                                                                            Remove Admin
+                                                                        </Button>
+                                                                    ) : (
+                                                                        <Button
+                                                                            size={`sm`}
+                                                                            className={`text-red-600`}
+                                                                            disabled={updatingRole}
+                                                                            onClick={() => handleMakeAdmin(user)}
+                                                                            variant={`outline`}>
+                                                                            <Shield className={`mr-2 w-4 h-4`} />
+                                                                            Make Admin
+                                                                        </Button>
+                                                                    )}
+                                                                </TableCell>
+
+                                                            </TableRow>
+                                                        </>
+                                                    })}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <div className={`py-12 text-center`}>
+                                        <Users className={`h-12 w-12 text-gray-300 mx-auto mb-4`} />
+                                        <h3 className={`text-lg font-medium text-gray-900 mb-1`}>
+                                            No users found
+                                        </h3>
+
+                                        <p className={`text-gray-500`}>
+                                            {userSearch
+                                                ? "No users match your search criteria."
+                                                : "There are no user registered yet"
+                                            }
+                                        </p>
+                                    </div>
+                                )
+                            )}
+
+
+                        </CardContent>
+                    </Card>
                 </TabsContent>
             </Tabs>
         </div>
