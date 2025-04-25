@@ -13,6 +13,14 @@ import {Button} from "@/components/ui/button";
 import {toast} from "sonner";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Badge} from "@/components/ui/badge";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
 
 const DAYS = [
     {value: "MONDAY", label: "Monday"},
@@ -37,9 +45,9 @@ const SettingsForm = () => {
 
     const [userSearch, setUserSearch] = useState("")
 
-    const handleSearchSubmit = async () => {
-
-    }
+    const [userToUpdate, setUserToUpdate] = useState(null)
+    const [isDialogMakeAdminOpen, setIsDialogMakeAdminOpen] = useState(false)
+    const [isDialogRemoveAdminOpen, setIsDialogRemoveAdminOpen] = useState(false)
 
     const {
         loading: fetchingSettings,
@@ -136,23 +144,20 @@ const SettingsForm = () => {
     )  : []
 
     const handleMakeAdmin = async (user) => {
-        const isConfirmed = confirm(
-            `Are you sure you want to give admin privileges to ${user.name || user.email}? Admin users can manage all aspects of the dealership.`
-        );
+        if (!userToUpdate) return;
 
-        if (isConfirmed) {
-            await updateRole(user.id, "ADMIN");
-        }
+        await updateRole(user?.id, "ADMIN");
+        setIsDialogMakeAdminOpen(false);
+        setUserToUpdate(null)
+
     };
 
     const handleRemoveAdmin = async (user) => {
-        const isConfirmed = confirm(
-            `Are you sure you want to remove admin privileges from ${user.name || user.email}? Admin users can manage all aspects of the dealership.`
-        );
+        if (!userToUpdate) return;
 
-        if (isConfirmed) {
-            await updateRole(user.id, "USER"); // ganti peran jadi USER (atau role default kamu)
-        }
+        await updateRole(user?.id, "USER"); // ganti peran jadi USER (atau role default kamu)
+        setIsDialogRemoveAdminOpen(false);
+        setUserToUpdate(null)
     };
 
 
@@ -326,7 +331,7 @@ const SettingsForm = () => {
                                     className={`pl-9 w-full`} />
                             </div>
 
-                            {fetchingUsers ? (
+                            {fetchingUsers || fetchingSettings ? (
                                 <div className={`py-12 flex justify-center`}>
                                     <Loader2 className={`mr-2 h-4 w-4 animate-spin`} />
                                 </div>
@@ -350,7 +355,7 @@ const SettingsForm = () => {
 
                                                     {filteredUsers.map((user) => {
                                                         return <>
-                                                            <TableRow>
+                                                            <TableRow key={user.id}>
 
                                                                 <TableCell>
                                                                     <div className={`flex items-center gap-2`}>
@@ -381,7 +386,10 @@ const SettingsForm = () => {
                                                                             size={`sm`}
                                                                             className={`text-red-600`}
                                                                             disabled={updatingRole}
-                                                                            onClick={() => handleRemoveAdmin(user)}
+                                                                            onClick={() => {
+                                                                                setUserToUpdate(user);
+                                                                                setIsDialogRemoveAdminOpen(true);
+                                                                            }}
                                                                             variant={`outline`}>
                                                                             <UserX className={`mr-2 w-4 h-4`} />
                                                                             Remove Admin
@@ -391,8 +399,10 @@ const SettingsForm = () => {
                                                                             size={`sm`}
                                                                             className={`text-red-600`}
                                                                             disabled={updatingRole}
-                                                                            onClick={() => handleMakeAdmin(user)}
-                                                                            variant={`outline`}>
+                                                                            onClick={() => {
+                                                                                setUserToUpdate(user);
+                                                                                setIsDialogMakeAdminOpen(true);
+                                                                            }}                                                                            variant={`outline`}>
                                                                             <Shield className={`mr-2 w-4 h-4`} />
                                                                             Make Admin
                                                                         </Button>
@@ -422,10 +432,76 @@ const SettingsForm = () => {
                                     </div>
                                 )
                             )}
-
-
                         </CardContent>
                     </Card>
+
+                    {/*dialog make admin*/}
+                    <Dialog open={isDialogMakeAdminOpen} setOpenChange={setIsDialogMakeAdminOpen}>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Confirm Make Admin</DialogTitle>
+                                <DialogDescription>Are you sure you want to make {userToUpdate?.name} as admin?</DialogDescription>
+                            </DialogHeader>
+
+                            <DialogFooter>
+                                <Button
+                                    variant={`outline`}
+                                    onClick={() => setIsDialogMakeAdminOpen(false)}
+                                    disbled={updatingRole}
+                                >
+                                    Cancel
+                                </Button>
+
+                                <Button
+                                    variant={`default`}
+                                    onClick={() => handleMakeAdmin(userToUpdate)}
+                                    disabled={updatingRole}
+                                >
+                                    {updatingRole ? (
+                                        <>
+                                            <Loader2 className={`mr-2 w-4 h-4 animate-spin`}/>
+                                            Updating...
+                                        </>
+                                    ) : ("Update Role")}
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+
+                    {/*dialog remove admin*/}
+                    <Dialog open={isDialogRemoveAdminOpen} setOpenChange={setIsDialogRemoveAdminOpen}>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Confirm Remove Admin</DialogTitle>
+                                <DialogDescription>Are you sure you want to remove {userToUpdate?.name} as admin?</DialogDescription>
+                            </DialogHeader>
+
+                            <DialogFooter>
+                                <Button
+                                    variant={`outline`}
+                                    onClick={() => setIsDialogRemoveAdminOpen(false)}
+                                    disbled={updatingRole}
+                                >
+                                    Cancel
+                                </Button>
+
+                                <Button
+                                    variant={`default`}
+                                    onClick={() => handleRemoveAdmin(userToUpdate)}
+                                    disabled={updatingRole}
+                                >
+                                    {updatingRole ? (
+                                        <>
+                                            <Loader2 className={`mr-2 w-4 h-4 animate-spin`}/>
+                                            Updating...
+                                        </>
+                                    ) : ("Update Role")}
+                                </Button>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+
+
                 </TabsContent>
             </Tabs>
         </div>
