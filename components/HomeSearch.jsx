@@ -2,7 +2,7 @@
 
 import React, {useEffect, useState} from "react";
 import { Input } from "./ui/input";
-import { Camera, Upload } from "lucide-react";
+import {Camera, Loader2, Upload} from "lucide-react";
 import { Button } from "./ui/button";
 import { useDropzone } from "react-dropzone";
 import { toast } from "sonner";
@@ -185,9 +185,17 @@ const HomeSearch = () => {
             </div>
 
             {imagePreview && (
-              <Button type="submit" className={"w-full"} disabled={isUploading}>
-                {isUploading ? "Uploading.." : "Search with this image"}
-              </Button>
+                <Button type="submit" className="w-full" disabled={isUploading || isProcessing}>
+                  {(isUploading || isProcessing) && (
+                      <Loader2 className="mr-2 w-4 h-4 animate-spin" />
+                  )}
+                  {isUploading
+                      ? "Uploading..."
+                      : isProcessing
+                          ? "Analyzing..."
+                          : "Search with this image"}
+                </Button>
+
             )}
           </form>
         </div>
