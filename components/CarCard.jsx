@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Card, CardContent } from "./ui/card";
 import Image from "next/image";
 import { CarIcon, Heart } from "lucide-react";
@@ -9,6 +9,12 @@ import { Badge } from "./ui/badge";
 import { useRouter } from "next/navigation";
 
 const CarCard = ({ car }) => {
+  const [formattedPrice, setFormattedPrice] = useState('');
+
+  useEffect(() => {
+    setFormattedPrice(car.price.toLocaleString());
+  }, [car.price]);
+
   const [isSaved, setIsSaved] = useState(car.wishlisted);
   const router = useRouter();
 
@@ -51,7 +57,7 @@ const CarCard = ({ car }) => {
         {/* model and price */}
         <div className="flex flex-col mb-2">
           <h3 className="text-lg font-bold line-clamp-1">{`${car.make} ${car.model}`}</h3>
-          <span className="text-xl font-bold text-blue-600">{`${car.price.toLocaleString()}`}</span>
+          <span className="text-xl font-bold text-blue-600">{formattedPrice}</span>
         </div>
 
         {/* year and engine */}
@@ -72,7 +78,8 @@ const CarCard = ({ car }) => {
           <Badge
             variant={`outline`}
             className="bg-gray-50"
-          >{`${car.mileage.toLocaleString()} miles`}</Badge>
+          >{`${new Intl.NumberFormat('en-US').format(car.mileage)} miles`}
+          </Badge>
           <Badge
             variant={`outline`}
             className="bg-gray-50"

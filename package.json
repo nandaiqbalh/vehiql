@@ -10,6 +10,7 @@
     "postinstall": "npx prisma generate"
   },
   "dependencies": {
+    "@arcjet/next": "^1.0.0-beta.6",
     "@clerk/nextjs": "^6.14.3",
     "@google/generative-ai": "^0.24.0",
     "@hookform/resolvers": "^5.0.1",
