@@ -190,9 +190,9 @@ const HomeSearch = () => {
                       <Loader2 className="mr-2 w-4 h-4 animate-spin" />
                   )}
                   {isUploading
-                      ? "Uploading..."
+                      ? "Uploading image..."
                       : isProcessing
-                          ? "Analyzing..."
+                          ? "Analyzing image..."
                           : "Search with this image"}
                 </Button>
 
