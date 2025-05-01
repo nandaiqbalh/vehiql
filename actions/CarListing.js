@@ -1,3 +1,5 @@
+"use server"
+
 import {db} from "@/lib/prisma";
 import {auth} from "@clerk/nextjs/server";
 import {serializeCarData} from "@/lib/Helpers";
@@ -193,8 +195,8 @@ export async function getCars(
         }
 
         const serializedCars = cars.map((car) => {
-            serializeCarData(car, wishlisted.has(car.id))
-        })
+            return serializeCarData(car, wishlisted.has(car.id));
+        });
 
         return {
             success: true,
