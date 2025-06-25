@@ -19,7 +19,7 @@ const routes = [
     {
         label: "Test Drives",
         icon: Calendar,
-        href: "/admin/test-drivers",
+        href: "/admin/test-drives",
     },
     {
         label: "Settings",
