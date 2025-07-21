@@ -8,77 +8,38 @@ import {revalidatePath} from "next/cache";
 export async function getCarFilter(){
 
     try {
-        const makes = await db.car.findMany({
-            where: {
-                status: "AVAILABLE",
-            },
-            select: {
-                make: true
-            },
-            distinct: [
-                "make"
-            ],
-            orderBy: {
-                make: "asc"
-            }
-        })
-
-        const bodyTypes = await db.car.findMany({
-            where: {
-                status: "AVAILABLE",
-            },
-            select: {
-                bodyType: true
-            },
-            distinct: [
-                "bodyType"
-            ],
-            orderBy: {
-                bodyType: "asc"
-            }
-        })
-
-        const fuelTypes = await db.car.findMany({
-            where: {
-                status: "AVAILABLE",
-            },
-            select: {
-                fuelType: true
-            },
-            distinct: [
-                "fuelType"
-            ],
-            orderBy: {
-                fuelType: "asc"
-            }
-        })
-
-        const transmissions = await db.car.findMany({
-            where: {
-                status: "AVAILABLE",
-            },
-            select: {
-                transmission: true
-            },
-            distinct: [
-                "transmission"
-            ],
-            orderBy: {
-                transmission: "asc"
-            }
-        })
-
-        const priceAggregations = await db.car.aggregate({
-            where: {
-                status: "AVAILABLE",
-            },
-            _min: {
-                price: true
-            },
-            _max: {
-                price: true
-            }
-        })
+        // Jalankan query filter secara paralel
+        const [makes, bodyTypes, fuelTypes, transmissions, priceAggregations] = await Promise.all([
+            db.car.findMany({
+                where: { status: "AVAILABLE" },
+                select: { make: true },
+                distinct: ["make"],
+                orderBy: { make: "asc" }
+            }),
+            db.car.findMany({
+                where: { status: "AVAILABLE" },
+                select: { bodyType: true },
+                distinct: ["bodyType"],
+                orderBy: { bodyType: "asc" }
+            }),
+            db.car.findMany({
+                where: { status: "AVAILABLE" },
+                select: { fuelType: true },
+                distinct: ["fuelType"],
+                orderBy: { fuelType: "asc" }
+            }),
+            db.car.findMany({
+                where: { status: "AVAILABLE" },
+                select: { transmission: true },
+                distinct: ["transmission"],
+                orderBy: { transmission: "asc" }
+            }),
+            db.car.aggregate({
+                where: { status: "AVAILABLE" },
+                _min: { price: true },
+                _max: { price: true }
+            })
+        ]);
 
         return {
             success: true,

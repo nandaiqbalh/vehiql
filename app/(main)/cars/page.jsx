@@ -1,6 +1,9 @@
 import {getCarFilter} from "@/actions/CarListing";
 import CarFilter from "@/app/(main)/cars/_components/CarFilter";
 import CarListing from "@/app/(main)/cars/_components/CarListing";
+import CarListingLoading from "@/app/(main)/cars/_components/CarListingLoading";
+
+export const revalidate = 60;
 
 export const metadata = {
     title: 'Cars | Vehiql',
@@ -9,20 +12,20 @@ export const metadata = {
 
 const CarsPage = async () => {
 
-    const filtersData = await getCarFilter()
+    const filtersData = await getCarFilter();
     return (
         <div className={`container mx-auto px-4 py-12`}>
             <h1 className={`text-6xl mb-4 gradient-title`}>Browse Car</h1>
-
             <div className={`flex flex-col lg:flex-row gap-8`}>
                 {/*filters*/}
                 <div className={`w-full lg:w-80 flex-shrink-0 `}>
                     <CarFilter filters={filtersData.data} />
                 </div>
-
                 {/*list*/}
                 <div className={`flex-1`}>
-                    <CarListing />
+                    <Suspense fallback={<CarListingLoading />}>
+                        <CarListing />
+                    </Suspense>
                 </div>
             </div>
         </div>
