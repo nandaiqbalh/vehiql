@@ -14,24 +14,23 @@ async function fileToBase64(file) {
     return buffer.toString("base64");
 }
 
-export async function getFeaturedCars(limit = 3) {
-    try {
-        const cars = await db.car.findMany({
-            where: {
-                featured: true,
-                status: "AVAILABLE",
-            },
-            take: limit,
-            orderBy: {
-                createdAt: "desc",
-            }
-        })
+import { cache } from "react";
 
-        return cars.map(serializeCarData);
-    } catch (e){
-        throw new Error(`Error fetching cars: ${e.message}`);
+export const getFeaturedCars = cache(async function getFeaturedCars(limit = 6) {
+    try {
+        // Query hanya field yang dibutuhkan, 1x query saja
+        const cars = await db.$queryRaw`
+            SELECT id, make, model, year, price, images, description, "bodyType", "fuelType", "transmission", "createdAt"
+            FROM "Car"
+            WHERE featured = true AND status = 'AVAILABLE'
+            ORDER BY "createdAt" DESC
+            LIMIT ${limit}
+        `;
+        return cars.map((car) => serializeCarData(car));
+    } catch (e) {
+        throw new Error(`Error fetching cars: ${e?.message || e}`);
     }
-}
+});
 
 export async function processImageSearch(file){
     try {

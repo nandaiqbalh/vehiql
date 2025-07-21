@@ -7,7 +7,11 @@ import { SignedOut } from "@clerk/nextjs";
 import { Calendar, Car, ChevronRight, Shield } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import {getFeaturedCars} from "@/actions/home";
+
+import { getFeaturedCars } from "@/actions/home";
+
+// Enable ISR: regenerate every 60 seconds
+export const revalidate = 60;
 
 export default async function Home() {
 
