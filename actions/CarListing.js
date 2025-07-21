@@ -61,7 +61,7 @@ export const getCarFilter = cache(async () => {
 });
 
 
-export const getCars = cache(async ({
+export async function getCars({
     search = "",
     make = "",
     bodyType = "",
@@ -72,7 +72,7 @@ export const getCars = cache(async ({
     sortBy = "newest",
     page = 1,
     limit = 6,
-}) => {
+}) {
     try {
         const { userId } = await auth();
         let dbUser = null;
@@ -169,7 +169,7 @@ export const getCars = cache(async ({
     } catch (e) {
         throw new Error(`Error get cars: ${e}`);
     }
-});
+}
 
 /**
  * Toggle car in user's wishlist
