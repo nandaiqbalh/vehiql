@@ -3,6 +3,7 @@ import CarFilter from "@/app/(main)/cars/_components/CarFilter";
 import CarListing from "@/app/(main)/cars/_components/CarListing";
 
 import { Suspense } from "react";
+import CarListingsLoading from "./_components/CarListingLoading";
 
 export const revalidate = 60;
 
@@ -24,7 +25,7 @@ const CarsPage = async () => {
                 </div>
                 {/*list*/}
                 <div className={`flex-1`}>
-                    <Suspense fallback={<CarListingLoading />}>
+                    <Suspense fallback={<CarListingsLoading />}>
                         <CarListing />
                     </Suspense>
                 </div>
