@@ -1,7 +1,8 @@
 import {getCarFilter} from "@/actions/CarListing";
 import CarFilter from "@/app/(main)/cars/_components/CarFilter";
 import CarListing from "@/app/(main)/cars/_components/CarListing";
-import CarListingLoading from "@/app/(main)/cars/_components/CarListingLoading";
+
+import { Suspense } from "react";
 
 export const revalidate = 60;
 
