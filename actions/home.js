@@ -1,5 +1,7 @@
 "use server"
 
+
+import { cache } from "react";
 import {db} from "@/lib/prisma";
 import {serializeCarData} from "@/lib/Helpers";
 import {request} from "@arcjet/next";
@@ -14,18 +16,34 @@ async function fileToBase64(file) {
     return buffer.toString("base64");
 }
 
-import { cache } from "react";
 
 export const getFeaturedCars = cache(async function getFeaturedCars(limit = 6) {
+
     try {
-        // Query hanya field yang dibutuhkan, 1x query saja
-        const cars = await db.$queryRaw`
-            SELECT id, make, model, year, price, images, description, "bodyType", "fuelType", "transmission", "createdAt"
-            FROM "Car"
-            WHERE featured = true AND status = 'AVAILABLE'
-            ORDER BY "createdAt" DESC
-            LIMIT ${limit}
-        `;
+        // Gunakan Prisma findMany dengan select agar lebih aman dan optimal
+        const cars = await db.car.findMany({
+            where: {
+                featured: true,
+                status: "AVAILABLE",
+            },
+            orderBy: {
+                createdAt: "desc",
+            },
+            take: limit,
+            select: {
+                id: true,
+                make: true,
+                model: true,
+                year: true,
+                price: true,
+                images: true,
+                description: true,
+                bodyType: true,
+                fuelType: true,
+                transmission: true,
+                createdAt: true,
+            },
+        });
         return cars.map((car) => serializeCarData(car));
     } catch (e) {
         throw new Error(`Error fetching cars: ${e?.message || e}`);
